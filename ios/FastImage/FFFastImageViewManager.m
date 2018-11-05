@@ -1,7 +1,7 @@
 #import "FFFastImageViewManager.h"
 #import "FFFastImageView.h"
 
-#import <SDWebImage/SDWebImagePrefetcher.h>
+#import "PINRemoteImageManager.h"
 
 @implementation FFFastImageViewManager
 
@@ -25,12 +25,12 @@ RCT_EXPORT_METHOD(preload:(nonnull NSArray<FFFastImageSource *> *)sources)
 
     [sources enumerateObjectsUsingBlock:^(FFFastImageSource * _Nonnull source, NSUInteger idx, BOOL * _Nonnull stop) {
         [source.headers enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString* header, BOOL *stop) {
-            [[SDWebImageDownloader sharedDownloader] setValue:header forHTTPHeaderField:key];
+            [[PINRemoteImageManager sharedImageManager] setValue:header forHTTPHeaderField:key];
         }];
         [urls setObject:source.url atIndexedSubscript:idx];
     }];
 
-    [[SDWebImagePrefetcher sharedImagePrefetcher] prefetchURLs:urls];
+    [[PINRemoteImageManager sharedImageManager] prefetchImagesWithURLs: urls];
 }
 
 @end

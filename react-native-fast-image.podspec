@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.exclude_files = "ios/Vendor/**/*.{h,m}"
 
   s.dependency 'React'
-  s.dependency 'SDWebImage/Core'
-  s.dependency 'SDWebImage/GIF'
+  s.dependency 'PINRemoteImage/iOS', '= 3.0.0-beta.13'
+  s.dependency 'PINRemoteImage/PINCache'
   s.dependency 'FLAnimatedImage'
 end
