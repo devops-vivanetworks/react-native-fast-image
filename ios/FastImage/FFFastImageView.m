@@ -123,82 +123,79 @@
             }
             return;
         }
+
+        // Set cache. - Currently not supported
+        // switch (_source.cacheControl) {
+        //     case FFFCacheControlWeb:
+        //         options |= SDWebImageRefreshCached;
+        //         break;
+        //     case FFFCacheControlCacheOnly:
+        //         options |= SDWebImageCacheMemoryOnly;
+        //         break;
+        //     case FFFCacheControlImmutable:
+        //         break;
+        // }
         
         // Set headers.
         [_source.headers enumerateKeysAndObjectsUsingBlock:^(NSString *key, NSString* header, BOOL *stop) {
-            [[SDWebImageDownloader sharedDownloader] setValue:header forHTTPHeaderField:key];
+            [[PINRemoteImageManager sharedImageManager] setValue:header forHTTPHeaderField:key];
         }];
         
-        // Set priority.
-        SDWebImageOptions options = SDWebImageRetryFailed;
-        switch (_source.priority) {
-            case FFFPriorityLow:
-                options |= SDWebImageLowPriority;
-                break;
-            case FFFPriorityNormal:
-                // Priority is normal by default.
-                break;
-            case FFFPriorityHigh:
-                options |= SDWebImageHighPriority;
-                break;
-        }
-        
-        switch (_source.cacheControl) {
-            case FFFCacheControlWeb:
-                options |= SDWebImageRefreshCached;
-                break;
-            case FFFCacheControlCacheOnly:
-                options |= SDWebImageFromCacheOnly;
-                break;
-            case FFFCacheControlImmutable:
-                break;
-        }
-        
-        if (self.onFastImageLoadStart) {
-            self.onFastImageLoadStart(@{});
-            self.hasSentOnLoadStart = YES;
+        if (_onFastImageLoadStart) {
+            _onFastImageLoadStart(@{});
+            hasSentOnLoadStart = YES;
         } {
             self.hasSentOnLoadStart = NO;
         }
         self.hasCompleted = NO;
         self.hasErrored = NO;
         
-        [self downloadImage:_source options:options];
-    }
-}
+        // Load the new source.
+        // This will work for:
+        //   - https://
+        //   - file:///var/containers/Bundle/Application/50953EA3-CDA8-4367-A595-DE863A012336/ReactNativeFastImageExample.app/assets/src/images/fields.jpg
+        //   - file:///var/containers/Bundle/Application/545685CB-777E-4B07-A956-2D25043BC6EE/ReactNativeFastImageExample.app/assets/src/images/plankton.gif
+        //   - file:///Users/dylan/Library/Developer/CoreSimulator/Devices/61DC182B-3E72-4A18-8908-8A947A63A67F/data/Containers/Data/Application/AFC2A0D2-A1E5-48C1-8447-C42DA9E5299D/Documents/images/E1F1D5FC-88DB-492F-AD33-B35A045D626A.jpg"
+        NSUUID *taskUUID = [[PINRemoteImageManager sharedImageManager] downloadImageWithURL: _source.url options: PINRemoteImageManagerDownloadOptionsNone progressDownload:^(int64_t completedBytes, int64_t totalBytes) {
+            if (_onFastImageProgress) {
+                _onFastImageProgress(@{
+                                       @"loaded": @(completedBytes),
+                                       @"total": @(totalBytes)
+                                       });
+            }
+        } completion:^(PINRemoteImageManagerResult * _Nonnull result) {
+            if (result.error) {
+                hasErrored = YES;
+                if (_onFastImageError) {
+                    _onFastImageError(@{});
+                }
+                if (_onFastImageLoadEnd) {
+                    _onFastImageLoadEnd(@{});
+                }
+            } else {
+                hasCompleted = YES;
+                self.image = result.image;
+                [self sendOnLoad:result.image];
+                if (_onFastImageLoadEnd) {
+                    _onFastImageLoadEnd(@{});
+                }
+            }
+        }];
 
-- (void)downloadImage:(FFFastImageSource *) source options:(SDWebImageOptions) options {
-    __weak typeof(self) weakSelf = self; // Always use a weak reference to self in blocks
-    [self sd_setImageWithURL:_source.url
-            placeholderImage:nil
-                     options:options
-                    progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
-                        if (weakSelf.onFastImageProgress) {
-                            weakSelf.onFastImageProgress(@{
-                                                           @"loaded": @(receivedSize),
-                                                           @"total": @(expectedSize)
-                                                           });
-                        }
-                    } completed:^(UIImage * _Nullable image,
-                                  NSError * _Nullable error,
-                                  SDImageCacheType cacheType,
-                                  NSURL * _Nullable imageURL) {
-                        if (error) {
-                            weakSelf.hasErrored = YES;
-                                if (weakSelf.onFastImageError) {
-                                    weakSelf.onFastImageError(@{});
-                                }
-                                if (weakSelf.onFastImageLoadEnd) {
-                                    weakSelf.onFastImageLoadEnd(@{});
-                                }
-                        } else {
-                            weakSelf.hasCompleted = YES;
-                            [weakSelf sendOnLoad:image];
-                            if (weakSelf.onFastImageLoadEnd) {
-                                weakSelf.onFastImageLoadEnd(@{});
-                            }
-                        }
-                    }];
+        // Set priority.
+        PINRemoteImageManagerPriority priority;
+        switch (_source.priority) {
+            case FFFPriorityLow:
+                priority = PINRemoteImageManagerPriorityLow;
+                break;
+            case FFFPriorityHigh:
+                priority = PINRemoteImageManagerPriorityHigh;
+                break;
+            default:
+                priority = PINRemoteImageManagerPriorityDefault;
+        }
+        [[PINRemoteImageManager sharedImageManager] setPriority: priority ofTaskWithUUID: taskUUID];
+    }
 }
 
 @end

@@ -1,7 +1,7 @@
 #import <UIKit/UIKit.h>
 
-#import <SDWebImage/SDAnimatedImageView+WebCache.h>
-#import <SDWebImage/SDWebImageDownloader.h>
+#import "PINRemoteImageManager.h"
+#import <FLAnimatedImage/FLAnimatedImageView.h>
 
 #import <React/RCTComponent.h>
 #import <React/RCTResizeMode.h>
