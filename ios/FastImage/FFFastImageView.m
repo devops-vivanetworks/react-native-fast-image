@@ -17,6 +17,7 @@
     self = [super init];
     self.resizeMode = RCTResizeModeCover;
     self.clipsToBounds = YES;
+    self.layer.masksToBounds = YES;
     return self;
 }
 
