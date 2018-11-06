@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 
 #import "PINRemoteImageManager.h"
+#import <PINRemoteImage/PINImageView+PINRemoteImage.h>
 #import <FLAnimatedImage/FLAnimatedImageView.h>
 
 #import <React/RCTComponent.h>
