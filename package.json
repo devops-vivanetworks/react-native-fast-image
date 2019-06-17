@@ -26,7 +26,6 @@
         "commit": "git-cz",
         "format": "yarn prettier --write",
         "lint": "eslint src/**/*.js react-native-fast-image-example/src/**/*.js",
-        "prepare": "git submodule update --init --recursive",
         "semantic-release": "semantic-release",
         "test": "jest ./src/*.js",
         "prettier": "prettier './**/*.{js,d.ts,js.flow,yml}'"
