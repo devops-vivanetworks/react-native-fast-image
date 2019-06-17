@@ -1,11 +1,17 @@
 #import "FFFastImageView.h"
 
-@implementation FFFastImageView {
-    BOOL hasSentOnLoadStart;
-    BOOL hasCompleted;
-    BOOL hasErrored;
-    NSDictionary* onLoadEvent;
-}
+
+@interface FFFastImageView()
+
+@property (nonatomic, assign) BOOL hasSentOnLoadStart;
+@property (nonatomic, assign) BOOL hasCompleted;
+@property (nonatomic, assign) BOOL hasErrored;
+
+@property (nonatomic, strong) NSDictionary* onLoadEvent;
+
+@end
+
+@implementation FFFastImageView
 
 - (id) init {
     self = [super init];
@@ -15,53 +21,77 @@
     return self;
 }
 
-- (void)setResizeMode:(RCTResizeMode)resizeMode
-{
+- (void)setResizeMode:(RCTResizeMode)resizeMode {
     if (_resizeMode != resizeMode) {
         _resizeMode = resizeMode;
         self.contentMode = (UIViewContentMode)resizeMode;
     }
 }
 
-- (void)setOnFastImageLoadEnd:(RCTBubblingEventBlock)onFastImageLoadEnd {
+- (void)setOnFastImageLoadEnd:(RCTDirectEventBlock)onFastImageLoadEnd {
     _onFastImageLoadEnd = onFastImageLoadEnd;
-    if (hasCompleted) {
+    if (self.hasCompleted) {
         _onFastImageLoadEnd(@{});
     }
 }
 
-- (void)setOnFastImageLoad:(RCTBubblingEventBlock)onFastImageLoad {
+- (void)setOnFastImageLoad:(RCTDirectEventBlock)onFastImageLoad {
     _onFastImageLoad = onFastImageLoad;
-    if (hasCompleted) {
-        _onFastImageLoad(onLoadEvent);
+    if (self.hasCompleted) {
+        _onFastImageLoad(self.onLoadEvent);
     }
 }
 
 - (void)setOnFastImageError:(RCTDirectEventBlock)onFastImageError {
     _onFastImageError = onFastImageError;
-    if (hasErrored) {
+    if (self.hasErrored) {
         _onFastImageError(@{});
     }
 }
 
-- (void)setOnFastImageLoadStart:(RCTBubblingEventBlock)onFastImageLoadStart {
-    if (_source && !hasSentOnLoadStart) {
+- (void)setOnFastImageLoadStart:(RCTDirectEventBlock)onFastImageLoadStart {
+    if (_source && !self.hasSentOnLoadStart) {
         _onFastImageLoadStart = onFastImageLoadStart;
         onFastImageLoadStart(@{});
-        hasSentOnLoadStart = YES;
+        self.hasSentOnLoadStart = YES;
     } else {
         _onFastImageLoadStart = onFastImageLoadStart;
-        hasSentOnLoadStart = NO;
+        self.hasSentOnLoadStart = NO;
+    }
+}
+
+- (void)setImageColor:(UIColor *)imageColor {
+    if (imageColor != nil) {
+        _imageColor = imageColor;
+        super.image = [self makeImage:super.image withTint:self.imageColor];
+    }
+}
+
+- (UIImage*)makeImage:(UIImage *)image withTint:(UIColor *)color {
+    UIImage *newImage = [image imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+    UIGraphicsBeginImageContextWithOptions(image.size, NO, newImage.scale);
+    [color set];
+    [newImage drawInRect:CGRectMake(0, 0, image.size.width, newImage.size.height)];
+    newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
+
+- (void)setImage:(UIImage *)image {
+    if (self.imageColor != nil) {
+        super.image = [self makeImage:image withTint:self.imageColor];
+    } else {
+        super.image = image;
     }
 }
 
 - (void)sendOnLoad:(UIImage *)image {
-    onLoadEvent = @{
-                    @"width":[NSNumber numberWithDouble:image.size.width],
-                    @"height":[NSNumber numberWithDouble:image.size.height]
-                    };
-    if (_onFastImageLoad) {
-        _onFastImageLoad(onLoadEvent);
+    self.onLoadEvent = @{
+                         @"width":[NSNumber numberWithDouble:image.size.width],
+                         @"height":[NSNumber numberWithDouble:image.size.height]
+                         };
+    if (self.onFastImageLoad) {
+        self.onFastImageLoad(self.onLoadEvent);
     }
 }
 
@@ -72,25 +102,25 @@
         // Load base64 images.
         NSString* url = [_source.url absoluteString];
         if (url && [url hasPrefix:@"data:image"]) {
-            if (_onFastImageLoadStart) {
-                _onFastImageLoadStart(@{});
-                hasSentOnLoadStart = YES;
+            if (self.onFastImageLoadStart) {
+                self.onFastImageLoadStart(@{});
+                self.hasSentOnLoadStart = YES;
             } {
-                hasSentOnLoadStart = NO;
+                self.hasSentOnLoadStart = NO;
             }
             UIImage *image = [UIImage imageWithData:[NSData dataWithContentsOfURL:_source.url]];
             [self setImage:image];
-            if (_onFastImageProgress) {
-                _onFastImageProgress(@{
-                                       @"loaded": @(1),
-                                       @"total": @(1)
-                                       });
+            if (self.onFastImageProgress) {
+                self.onFastImageProgress(@{
+                                           @"loaded": @(1),
+                                           @"total": @(1)
+                                           });
             }
-            hasCompleted = YES;
+            self.hasCompleted = YES;
             [self sendOnLoad:image];
             
-            if (_onFastImageLoadEnd) {
-                _onFastImageLoadEnd(@{});
+            if (self.onFastImageLoadEnd) {
+                self.onFastImageLoadEnd(@{});
             }
             return;
         }
@@ -116,10 +146,10 @@
             _onFastImageLoadStart(@{});
             hasSentOnLoadStart = YES;
         } {
-            hasSentOnLoadStart = NO;
+            self.hasSentOnLoadStart = NO;
         }
-        hasCompleted = NO;
-        hasErrored = NO;
+        self.hasCompleted = NO;
+        self.hasErrored = NO;
         
         // Load the new source.
         // This will work for:

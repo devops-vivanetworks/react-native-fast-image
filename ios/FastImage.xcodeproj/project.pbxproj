@@ -119,6 +119,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = A28797141DE0C0A60081BDFA;
@@ -239,7 +240,6 @@
 					"$(SRCROOT)/../../react-native/Libraries/Image",
 					"$(SRCROOT)/../../../ios/Pods/Headers/Public/**",
 					"$(SRCROOT)/Vendor/SDWebImage",
-					"$(SRCROOT)/Vendor/SDWebImage/Vendors/FLAnimatedImage",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -256,7 +256,6 @@
 					"$(SRCROOT)/../../react-native/Libraries/Image",
 					"$(SRCROOT)/../../../ios/Pods/Headers/Public/**",
 					"$(SRCROOT)/Vendor/SDWebImage",
-					"$(SRCROOT)/Vendor/SDWebImage/Vendors/FLAnimatedImage",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
