@@ -144,7 +144,7 @@
         
         if (_onFastImageLoadStart) {
             _onFastImageLoadStart(@{});
-            hasSentOnLoadStart = YES;
+            self.hasSentOnLoadStart = YES;
         } {
             self.hasSentOnLoadStart = NO;
         }
@@ -159,7 +159,7 @@
         //   - file:///Users/dylan/Library/Developer/CoreSimulator/Devices/61DC182B-3E72-4A18-8908-8A947A63A67F/data/Containers/Data/Application/AFC2A0D2-A1E5-48C1-8447-C42DA9E5299D/Documents/images/E1F1D5FC-88DB-492F-AD33-B35A045D626A.jpg"
         [self pin_setImageFromURL: _source.url completion:^(PINRemoteImageManagerResult * _Nonnull result) {
             if (result.error) {
-                hasErrored = YES;
+                self.hasErrored = YES;
                 if (_onFastImageError) {
                     _onFastImageError(@{});
                 }
@@ -167,7 +167,7 @@
                     _onFastImageLoadEnd(@{});
                 }
             } else {
-                hasCompleted = YES;
+                self.hasCompleted = YES;
                 self.image = result.image;
                 [self sendOnLoad:result.image];
                 if (_onFastImageLoadEnd) {

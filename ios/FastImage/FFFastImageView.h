@@ -9,7 +9,7 @@
 
 #import "FFFastImageSource.h"
 
-@interface FFFastImageView : SDAnimatedImageView
+@interface FFFastImageView : FLAnimatedImageView
 
 @property (nonatomic, copy) RCTDirectEventBlock onFastImageLoadStart;
 @property (nonatomic, copy) RCTDirectEventBlock onFastImageProgress;
@@ -21,4 +21,3 @@
 @property (nonatomic, strong) UIColor *imageColor;
 
 @end
-
