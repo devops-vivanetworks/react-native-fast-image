@@ -34,5 +34,20 @@ RCT_EXPORT_METHOD(preload:(nonnull NSArray<FFFastImageSource *> *)sources)
     [[PINRemoteImageManager sharedImageManager] prefetchImagesWithURLs: urls];
 }
 
+RCT_EXPORT_METHOD(getSize:(NSURL *) url resolver:(RCTResponseSenderBlock)resolve rejecter:(RCTResponseSenderBlock)reject)
+{
+    UIImageView *imageView = [[UIImageView alloc] init];
+    [imageView pin_setImageFromURL: url completion:^(PINRemoteImageManagerResult * _Nonnull result) {
+        if (result.error) {
+            reject(result.error);
+        } else {
+            UIImage *image = imageView.image;
+            NSNumber *width = @(image.size.width * image.scale);
+            NSNumber *height = @(image.size.height * image.scale);
+            resolve(@[width, height]);
+        }
+    }];
+}
+
 @end
 
