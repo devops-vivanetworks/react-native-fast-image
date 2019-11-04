@@ -3,6 +3,7 @@
 #import "PINRemoteImageManager.h"
 #import <PINRemoteImage/PINImageView+PINRemoteImage.h>
 #import <FLAnimatedImage/FLAnimatedImageView.h>
+#import <FLAnimatedImage/FLAnimatedImage.h>
 
 #import <React/RCTComponent.h>
 #import <React/RCTResizeMode.h>
