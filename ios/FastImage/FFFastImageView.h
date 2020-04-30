@@ -1,6 +1,6 @@
 #import <UIKit/UIKit.h>
 
-#import "PINRemoteImageManager.h"
+#import <PINRemoteImageManager/PINRemoteImageManager.h>
 #import <PINRemoteImage/PINImageView+PINRemoteImage.h>
 #import <FLAnimatedImage/FLAnimatedImageView.h>
 #import <FLAnimatedImage/FLAnimatedImage.h>
