@@ -1,7 +1,7 @@
 #import "FFFastImageViewManager.h"
 #import "FFFastImageView.h"
 
-#import "PINRemoteImageManager.h"
+#import <PINRemoteImage/PINRemoteImageManager.h>
 
 @implementation FFFastImageViewManager
 
