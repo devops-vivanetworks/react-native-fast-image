@@ -34,7 +34,7 @@ RCT_EXPORT_METHOD(preload:(nonnull NSArray<FFFastImageSource *> *)sources)
     [[PINRemoteImageManager sharedImageManager] prefetchImagesWithURLs: urls];
 }
 
-RCT_EXPORT_METHOD(getSize:(NSURL *) url resolver:(RCTResponseSenderBlock)resolve rejecter:(RCTResponseSenderBlock)reject)
+RCT_EXPORT_METHOD(getSize:(NSURL *)url resolver:(RCTResponseSenderBlock)resolve rejecter:(RCTResponseErrorBlock)reject)
 {
     UIImageView *imageView = [[UIImageView alloc] init];
     [imageView pin_setImageFromURL: url completion:^(PINRemoteImageManagerResult * _Nonnull result) {
