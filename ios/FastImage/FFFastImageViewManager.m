@@ -3,12 +3,19 @@
 
 #import <PINRemoteImage/PINRemoteImageManager.h>
 
-@implementation FFFastImageViewManager
+@implementation FFFastImageViewManager {
+    NSURL *_bundlePath;
+}
 
 RCT_EXPORT_MODULE(FastImageView)
 
+- (instancetype)initWithBundlePath:(NSURL *) bundlePath {
+    _bundlePath = bundlePath;
+    return self;
+}
+
 - (FFFastImageView*)view {
-  return [[FFFastImageView alloc] init];
+  return [[FFFastImageView alloc] initWithBundlePath:_bundlePath];
 }
 
 RCT_EXPORT_VIEW_PROPERTY(source, FFFastImageSource)

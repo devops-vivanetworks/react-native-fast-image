@@ -21,4 +21,6 @@
 @property (nonatomic, strong) FFFastImageSource *source;
 @property (nonatomic, strong) UIColor *imageColor;
 
+- (instancetype) initWithBundlePath:(NSURL *)bundlePath;
+
 @end

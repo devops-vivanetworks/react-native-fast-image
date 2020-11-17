@@ -11,7 +11,14 @@
 
 @end
 
-@implementation FFFastImageView
+@implementation FFFastImageView {
+    NSURL *_bundlePath;
+}
+
+- (instancetype) initWithBundlePath:(NSURL *)bundlePath {
+    _bundlePath = [bundlePath URLByDeletingLastPathComponent];
+    return [self init];
+}
 
 - (id) init {
     self = [super init];
@@ -101,6 +108,18 @@
         
         // Load base64 images.
         NSString* url = [_source.url absoluteString];
+        
+        if(_bundlePath && [_source.url isFileURL] && ![url containsString:_bundlePath.absoluteString]) {
+            NSRange range = [url rangeOfString:@"assets"];
+            if(range.location != NSNotFound) {
+                NSString *relativeImagePath = [url substringFromIndex:range.location];
+                NSURL *newUrl = [NSURL URLWithString:relativeImagePath relativeToURL:_bundlePath];
+                if([newUrl checkResourceIsReachableAndReturnError:nil]) {
+                    url = [newUrl absoluteString];
+                }
+            }
+        }
+        
         if (url && [url hasPrefix:@"data:image"]) {
             if (self.onFastImageLoadStart) {
                 self.onFastImageLoadStart(@{});

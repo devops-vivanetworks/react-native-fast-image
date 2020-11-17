@@ -2,4 +2,6 @@
 
 @interface FFFastImageViewManager : RCTViewManager
 
+- (instancetype)initWithBundlePath:(NSURL *) bundlePath;
+
 @end
